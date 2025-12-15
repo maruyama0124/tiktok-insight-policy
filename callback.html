@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>TikTok Callback</title>
+</head>
+<body>
+  <h1>TikTok Login Callback</h1>
+  <p>Received TikTok authorization parameters:</p>
+  <pre id="params">loading...</pre>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    document.getElementById('params').textContent = params.toString();
+  </script>
+</body>
+</html>
