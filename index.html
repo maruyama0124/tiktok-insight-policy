@@ -2,54 +2,13 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>TikTok Insight Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TikTok Insight App</title>
 </head>
 <body>
-  <h1>Login</h1>
-  <p>
-    <label for="apiBase">API Base URL:</label>
-    <input id="apiBase" type="text" value="http://localhost:8000">
-  </p>
-  <button id="loginBtn">Log in with TikTok</button>
-  <p id="status"></p>
-  <p>
-    <a href="./terms.html">Terms</a> |
-    <a href="./privacy.html">Privacy</a>
-  </p>
-
-  <script>
-    const loginBtn = document.getElementById("loginBtn");
-    const statusEl = document.getElementById("status");
-    const apiInput = document.getElementById("apiBase");
-
-    async function startLogin() {
-      const apiBase = apiInput.value.trim();
-      if (!apiBase) {
-        statusEl.textContent = "API Base URL is required.";
-        return;
-      }
-
-      statusEl.textContent = "Fetching login URL...";
-      try {
-        const res = await fetch(`${apiBase}/auth/login-url`);
-        if (!res.ok) {
-          statusEl.textContent = `API error: ${res.status}`;
-          return;
-        }
-        const body = await res.json();
-        if (!body.auth_url) {
-          statusEl.textContent = "auth_url not found in API response.";
-          return;
-        }
-        statusEl.textContent = "Redirecting...";
-        window.location.href = body.auth_url;
-      } catch (err) {
-        statusEl.textContent = `Request failed: ${String(err)}`;
-      }
-    }
-
-    loginBtn.addEventListener("click", startLogin);
-  </script>
+  <h1>TikTok Insight App (Sandbox)</h1>
+  <ul>
+    <li><a href="./terms.html">Terms of Service</a></li>
+    <li><a href="./privacy.html">Privacy Policy</a></li>
+  </ul>
 </body>
 </html>

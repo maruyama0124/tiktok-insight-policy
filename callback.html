@@ -28,58 +28,12 @@
 <body>
   <h2>Authorization Code</h2>
   <pre id="code"></pre>
-  <h2>Callback Status</h2>
-  <pre id="status">waiting...</pre>
-  <p>
-    <label for="apiBase">API Base URL:</label>
-    <input id="apiBase" type="text" placeholder="https://your-api.example.com">
-    <button id="retryBtn">Send to API</button>
-  </p>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code");
-    const apiParam = params.get("api");
-    const apiInput = document.getElementById("apiBase");
-    const retryBtn = document.getElementById("retryBtn");
-
-    const savedApi = localStorage.getItem("tiktok_api_base");
-    const defaultApi = apiParam || savedApi || "";
-    apiInput.value = defaultApi;
 
     document.getElementById("code").innerText = code ?? "code not found";
-
-    async function sendCode(apiBase) {
-      const statusEl = document.getElementById("status");
-      if (!code) {
-        statusEl.innerText = "code not found in URL";
-        return;
-      }
-      if (!apiBase) {
-        statusEl.innerText = "API Base URL is required";
-        return;
-      }
-
-      statusEl.innerText = "sending code to API...";
-      try {
-        const res = await fetch(`${apiBase}/auth/callback`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code }),
-        });
-        const body = await res.json().catch(() => ({}));
-        statusEl.innerText = `done: ${res.status} ${JSON.stringify(body)}`;
-        localStorage.setItem("tiktok_api_base", apiBase);
-      } catch (err) {
-        statusEl.innerText = `failed: ${String(err)}`;
-      }
-    }
-
-    retryBtn.addEventListener("click", () => sendCode(apiInput.value.trim()));
-
-    if (defaultApi) {
-      sendCode(defaultApi);
-    }
   </script>
 </body>
 </html>
