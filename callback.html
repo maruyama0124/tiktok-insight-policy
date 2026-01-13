@@ -28,6 +28,14 @@
 <body>
   <h2>Authorization Code</h2>
   <pre id="code"></pre>
+  <h2>Send Code to API</h2>
+  <p>1) Copy the code above (or confirm it below).</p>
+  <p>2) Enter the API Base URL.</p>
+  <p>3) Click "Send to API".</p>
+  <p>
+    <label for="codeInput">Code:</label>
+    <textarea id="codeInput" rows="4" cols="80" placeholder="Paste code here"></textarea>
+  </p>
   <h2>Callback Status</h2>
   <pre id="status">waiting...</pre>
   <p>
@@ -42,13 +50,22 @@
     const apiParam = params.get("api");
     const apiInput = document.getElementById("apiBase");
     const sendBtn = document.getElementById("sendBtn");
+    const codeInput = document.getElementById("codeInput");
+    const statusEl = document.getElementById("status");
 
     document.getElementById("code").innerText = code ?? "code not found";
+    if (code) {
+      codeInput.value = code;
+    }
+    const savedApi = localStorage.getItem("tiktok_api_base");
+    if (savedApi) {
+      apiInput.value = savedApi;
+    }
 
     async function sendCode(apiBase) {
-      const statusEl = document.getElementById("status");
-      if (!code) {
-        statusEl.innerText = "code not found in URL";
+      const codeValue = codeInput.value.trim();
+      if (!codeValue) {
+        statusEl.innerText = "code is required";
         return;
       }
       if (!apiBase) {
@@ -58,7 +75,7 @@
 
       statusEl.innerText = "sending code to API...";
       try {
-        const body = new URLSearchParams({ code });
+        const body = new URLSearchParams({ code: codeValue });
         const res = await fetch(`${apiBase}/auth/callback`, {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -66,6 +83,7 @@
         });
         const result = await res.json().catch(() => ({}));
         statusEl.innerText = `done: ${res.status} ${JSON.stringify(result)}`;
+        localStorage.setItem("tiktok_api_base", apiBase);
       } catch (err) {
         statusEl.innerText = `failed: ${String(err)}`;
       }
@@ -73,7 +91,6 @@
 
     if (apiParam) {
       apiInput.value = apiParam;
-      sendCode(apiParam);
     }
 
     sendBtn.addEventListener("click", () => {
