@@ -75,11 +75,10 @@
 
       statusEl.innerText = "送信中...";
       try {
-        const body = new URLSearchParams({ code: codeValue });
         const res = await fetch(`${apiBase}/auth/callback`, {
           method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: codeValue }),
         });
         const result = await res.json().catch(() => ({}));
         statusEl.innerText = `完了: ${res.status} ${JSON.stringify(result)}`;
