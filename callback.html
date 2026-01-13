@@ -26,22 +26,22 @@
   <title>TikTok Callback</title>
 </head>
 <body>
-  <h2>Authorization Code</h2>
+  <h2>認可コード</h2>
   <pre id="code"></pre>
-  <h2>Send Code to API</h2>
-  <p>1) Copy the code above (or confirm it below).</p>
-  <p>2) Enter the API Base URL.</p>
-  <p>3) Click "Send to API".</p>
+  <h2>APIへ送信</h2>
+  <p>1) 上のコードを確認します。</p>
+  <p>2) API Base URL を入力します。</p>
+  <p>3) 「APIへ送信」をクリックします。</p>
   <p>
-    <label for="codeInput">Code:</label>
-    <textarea id="codeInput" rows="4" cols="80" placeholder="Paste code here"></textarea>
+    <label for="codeInput">コード:</label>
+    <textarea id="codeInput" rows="4" cols="80" placeholder="ここにコードを貼り付け"></textarea>
   </p>
-  <h2>Callback Status</h2>
+  <h2>送信ステータス</h2>
   <pre id="status">waiting...</pre>
   <p>
     <label for="apiBase">API Base URL:</label>
-    <input id="apiBase" type="text" placeholder="https://your-api.example.com">
-    <button id="sendBtn">Send to API</button>
+    <input id="apiBase" type="text" placeholder="http://localhost:8000">
+    <button id="sendBtn">APIへ送信</button>
   </p>
 
   <script>
@@ -53,7 +53,7 @@
     const codeInput = document.getElementById("codeInput");
     const statusEl = document.getElementById("status");
 
-    document.getElementById("code").innerText = code ?? "code not found";
+    document.getElementById("code").innerText = code ?? "コードが見つかりません";
     if (code) {
       codeInput.value = code;
     }
@@ -65,15 +65,15 @@
     async function sendCode(apiBase) {
       const codeValue = codeInput.value.trim();
       if (!codeValue) {
-        statusEl.innerText = "code is required";
+        statusEl.innerText = "コードが必要です";
         return;
       }
       if (!apiBase) {
-        statusEl.innerText = "API Base URL is required";
+        statusEl.innerText = "API Base URL が必要です";
         return;
       }
 
-      statusEl.innerText = "sending code to API...";
+      statusEl.innerText = "送信中...";
       try {
         const body = new URLSearchParams({ code: codeValue });
         const res = await fetch(`${apiBase}/auth/callback`, {
@@ -82,10 +82,10 @@
           body,
         });
         const result = await res.json().catch(() => ({}));
-        statusEl.innerText = `done: ${res.status} ${JSON.stringify(result)}`;
+        statusEl.innerText = `完了: ${res.status} ${JSON.stringify(result)}`;
         localStorage.setItem("tiktok_api_base", apiBase);
       } catch (err) {
-        statusEl.innerText = `failed: ${String(err)}`;
+        statusEl.innerText = `失敗: ${String(err)}`;
       }
     }
 
