@@ -43,6 +43,10 @@
     <input id="apiBase" type="text" placeholder="http://localhost:8000">
     <button id="sendBtn">APIへ送信</button>
   </p>
+  <p>
+    <button id="fetchBtn">ユーザー・動画情報を取得</button>
+  </p>
+  <pre id="fetchStatus">未実行</pre>
 
   <script>
     const params = new URLSearchParams(window.location.search);
@@ -50,8 +54,10 @@
     const apiParam = params.get("api");
     const apiInput = document.getElementById("apiBase");
     const sendBtn = document.getElementById("sendBtn");
+    const fetchBtn = document.getElementById("fetchBtn");
     const codeInput = document.getElementById("codeInput");
     const statusEl = document.getElementById("status");
+    const fetchStatusEl = document.getElementById("fetchStatus");
 
     document.getElementById("code").innerText = code ?? "コードが見つかりません";
     if (code) {
@@ -89,12 +95,37 @@
       }
     }
 
+    async function fetchLatest(apiBase) {
+      if (!apiBase) {
+        fetchStatusEl.innerText = "API Base URL が必要です";
+        return;
+      }
+
+      fetchStatusEl.innerText = "取得中...";
+      try {
+        const res = await fetch(`${apiBase}/auth/fetch-latest`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        });
+        const result = await res.json().catch(() => ({}));
+        const pretty = JSON.stringify(result, null, 2);
+        fetchStatusEl.innerText = `完了: ${res.status}\n${pretty}`;
+      } catch (err) {
+        fetchStatusEl.innerText = `失敗: ${String(err)}`;
+      }
+    }
+
     if (apiParam) {
       apiInput.value = apiParam;
     }
 
     sendBtn.addEventListener("click", () => {
       sendCode(apiInput.value.trim());
+    });
+
+    fetchBtn.addEventListener("click", () => {
+      fetchLatest(apiInput.value.trim());
     });
   </script>
 </body>
