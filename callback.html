@@ -81,7 +81,8 @@
           body: JSON.stringify({ code: codeValue }),
         });
         const result = await res.json().catch(() => ({}));
-        statusEl.innerText = `完了: ${res.status} ${JSON.stringify(result)}`;
+        const pretty = JSON.stringify(result, null, 2);
+        statusEl.innerText = `完了: ${res.status}\n${pretty}`;
         localStorage.setItem("tiktok_api_base", apiBase);
       } catch (err) {
         statusEl.innerText = `失敗: ${String(err)}`;
