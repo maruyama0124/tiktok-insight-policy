@@ -39,8 +39,6 @@
   <h2>送信ステータス</h2>
   <pre id="status">waiting...</pre>
   <p>
-    <label for="apiBase">API Base URL:</label>
-    <input id="apiBase" type="text" placeholder="http://localhost:8000">
     <button id="runBtn">送信して取得</button>
   </p>
   <p>
@@ -51,8 +49,7 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code");
-    const apiParam = params.get("api");
-    const apiInput = document.getElementById("apiBase");
+    const apiBase = "https://wiggly-reguline-dane.ngrok-free.dev";
     const runBtn = document.getElementById("runBtn");
     const loginBtn = document.getElementById("loginBtn");
     const codeInput = document.getElementById("codeInput");
@@ -63,24 +60,14 @@
     if (code) {
       codeInput.value = code;
     }
-    const defaultApi = "https://wiggly-reguline-dane.ngrok-free.dev";
-    apiInput.value = defaultApi;
-    const savedApi = localStorage.getItem("tiktok_api_base");
-    if (savedApi) {
-      apiInput.value = savedApi;
-    }
+    const defaultApi = apiBase;
 
-    async function sendCode(apiBase) {
+    async function sendCode() {
       const codeValue = codeInput.value.trim();
       if (!codeValue) {
         statusEl.innerText = "コードが必要です";
         return { ok: false };
       }
-      if (!apiBase) {
-        statusEl.innerText = "API Base URL が必要です";
-        return { ok: false };
-      }
-
       statusEl.innerText = "送信中...";
       try {
         const res = await fetch(`${apiBase}/auth/callback`, {
@@ -91,7 +78,6 @@
         const result = await res.json().catch(() => ({}));
         const pretty = JSON.stringify(result, null, 2);
         statusEl.innerText = `完了: ${res.status}\n${pretty}`;
-        localStorage.setItem("tiktok_api_base", apiBase);
         return { ok: res.ok };
       } catch (err) {
         statusEl.innerText = `失敗: ${String(err)}`;
@@ -99,12 +85,7 @@
       }
     }
 
-    async function fetchLatest(apiBase) {
-      if (!apiBase) {
-        fetchStatusEl.innerText = "API Base URL が必要です";
-        return;
-      }
-
+    async function fetchLatest() {
       fetchStatusEl.innerText = "取得中...";
       try {
         const res = await fetch(`${apiBase}/auth/fetch-latest`, {
@@ -125,10 +106,9 @@
     }
 
     async function runAll() {
-      const apiBase = apiInput.value.trim();
-      const result = await sendCode(apiBase);
+      const result = await sendCode();
       if (result && result.ok) {
-        await fetchLatest(apiBase);
+        await fetchLatest();
       }
     }
 
