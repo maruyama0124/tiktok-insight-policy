@@ -30,8 +30,7 @@
   <pre id="code"></pre>
   <h2>APIへ送信</h2>
   <p>1) 上のコードを確認します。</p>
-  <p>2) API Base URL を入力します。</p>
-  <p>3) 「APIへ送信」をクリックします。</p>
+  <p>2) 「送信して取得」をクリックします。</p>
   <p>
     <label for="codeInput">コード:</label>
     <textarea id="codeInput" rows="4" cols="80" placeholder="ここにコードを貼り付け"></textarea>
@@ -99,10 +98,6 @@
       } catch (err) {
         fetchStatusEl.innerText = `失敗: ${String(err)}`;
       }
-    }
-
-    if (apiParam) {
-      apiInput.value = apiParam;
     }
 
     async function runAll() {
