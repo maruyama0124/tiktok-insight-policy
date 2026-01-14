@@ -47,7 +47,18 @@
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
+    let code = params.get("code");
+    if (!code) {
+      const match = window.location.href.match(/[?&]code=([^&]+)/);
+      code = match ? match[1] : null;
+    }
+    if (code) {
+      try {
+        code = decodeURIComponent(code);
+      } catch (err) {
+        code = code;
+      }
+    }
     const apiBase = "https://wiggly-reguline-dane.ngrok-free.dev";
     const runBtn = document.getElementById("runBtn");
     const loginBtn = document.getElementById("loginBtn");
