@@ -134,25 +134,9 @@
 
     runBtn.addEventListener("click", runAll);
 
-    async function startLogin() {
-      const apiBase = apiInput.value.trim();
-      if (!apiBase) {
-        fetchStatusEl.innerText = "API Base URL が必要です";
-        return;
-      }
-      fetchStatusEl.innerText = "ログインURLを取得中...";
-      try {
-        const res = await fetch(`${apiBase}/auth/login-url`);
-        const body = await res.json().catch(() => ({}));
-        const authUrl = body && body.auth_url;
-        if (!authUrl) {
-          fetchStatusEl.innerText = "ログインURLの取得に失敗しました";
-          return;
-        }
-        window.location.href = authUrl;
-      } catch (err) {
-        fetchStatusEl.innerText = `失敗: ${String(err)}`;
-      }
+    function startLogin() {
+      const authUrl = "https://www.tiktok.com/v2/auth/authorize/?client_key=sbawmzotbr0r0mm3xf&response_type=code&scope=user.info.basic%2Cuser.info.stats%2Cuser.info.profile%2Cvideo.list&redirect_uri=https%3A%2F%2Fmaruyama0124.github.io%2Ftiktok-insight-policy%2Fcallback.html&state=rebear_tiktok_insight";
+      window.location.href = authUrl;
     }
 
     loginBtn.addEventListener("click", startLogin);
