@@ -101,10 +101,12 @@
     }
 
     async function runAll() {
+      runBtn.disabled = true;
       const result = await sendCode();
       if (result && result.ok) {
         await fetchLatest();
       }
+      runBtn.style.display = "none";
     }
 
     runBtn.addEventListener("click", runAll);
