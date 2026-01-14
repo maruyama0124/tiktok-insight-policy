@@ -41,10 +41,7 @@
   <p>
     <label for="apiBase">API Base URL:</label>
     <input id="apiBase" type="text" placeholder="http://localhost:8000">
-    <button id="sendBtn">APIへ送信</button>
-  </p>
-  <p>
-    <button id="fetchBtn">ユーザー・動画情報を取得</button>
+    <button id="runBtn">送信して取得</button>
   </p>
   <pre id="fetchStatus">未実行</pre>
 
@@ -53,8 +50,7 @@
     const code = params.get("code");
     const apiParam = params.get("api");
     const apiInput = document.getElementById("apiBase");
-    const sendBtn = document.getElementById("sendBtn");
-    const fetchBtn = document.getElementById("fetchBtn");
+    const runBtn = document.getElementById("runBtn");
     const codeInput = document.getElementById("codeInput");
     const statusEl = document.getElementById("status");
     const fetchStatusEl = document.getElementById("fetchStatus");
@@ -72,11 +68,11 @@
       const codeValue = codeInput.value.trim();
       if (!codeValue) {
         statusEl.innerText = "コードが必要です";
-        return;
+        return { ok: false };
       }
       if (!apiBase) {
         statusEl.innerText = "API Base URL が必要です";
-        return;
+        return { ok: false };
       }
 
       statusEl.innerText = "送信中...";
@@ -90,8 +86,10 @@
         const pretty = JSON.stringify(result, null, 2);
         statusEl.innerText = `完了: ${res.status}\n${pretty}`;
         localStorage.setItem("tiktok_api_base", apiBase);
+        return { ok: res.ok };
       } catch (err) {
         statusEl.innerText = `失敗: ${String(err)}`;
+        return { ok: false };
       }
     }
 
@@ -120,13 +118,15 @@
       apiInput.value = apiParam;
     }
 
-    sendBtn.addEventListener("click", () => {
-      sendCode(apiInput.value.trim());
-    });
+    async function runAll() {
+      const apiBase = apiInput.value.trim();
+      const result = await sendCode(apiBase);
+      if (result && result.ok) {
+        await fetchLatest(apiBase);
+      }
+    }
 
-    fetchBtn.addEventListener("click", () => {
-      fetchLatest(apiInput.value.trim());
-    });
+    runBtn.addEventListener("click", runAll);
   </script>
 </body>
 </html>
