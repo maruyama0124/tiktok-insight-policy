@@ -59,6 +59,8 @@
     if (code) {
       codeInput.value = code;
     }
+    const defaultApi = "https://wiggly-reguline-dane.ngrok-free.dev";
+    apiInput.value = defaultApi;
     const savedApi = localStorage.getItem("tiktok_api_base");
     if (savedApi) {
       apiInput.value = savedApi;
