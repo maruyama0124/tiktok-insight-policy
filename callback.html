@@ -43,6 +43,9 @@
     <input id="apiBase" type="text" placeholder="http://localhost:8000">
     <button id="runBtn">送信して取得</button>
   </p>
+  <p>
+    <button id="loginBtn">もう一度ログインする</button>
+  </p>
   <pre id="fetchStatus">未実行</pre>
 
   <script>
@@ -51,6 +54,7 @@
     const apiParam = params.get("api");
     const apiInput = document.getElementById("apiBase");
     const runBtn = document.getElementById("runBtn");
+    const loginBtn = document.getElementById("loginBtn");
     const codeInput = document.getElementById("codeInput");
     const statusEl = document.getElementById("status");
     const fetchStatusEl = document.getElementById("fetchStatus");
@@ -129,6 +133,29 @@
     }
 
     runBtn.addEventListener("click", runAll);
+
+    async function startLogin() {
+      const apiBase = apiInput.value.trim();
+      if (!apiBase) {
+        fetchStatusEl.innerText = "API Base URL が必要です";
+        return;
+      }
+      fetchStatusEl.innerText = "ログインURLを取得中...";
+      try {
+        const res = await fetch(`${apiBase}/auth/login-url`);
+        const body = await res.json().catch(() => ({}));
+        const authUrl = body && body.auth_url;
+        if (!authUrl) {
+          fetchStatusEl.innerText = "ログインURLの取得に失敗しました";
+          return;
+        }
+        window.location.href = authUrl;
+      } catch (err) {
+        fetchStatusEl.innerText = `失敗: ${String(err)}`;
+      }
+    }
+
+    loginBtn.addEventListener("click", startLogin);
   </script>
 </body>
 </html>
