@@ -248,58 +248,17 @@
     document.getElementById("code").innerText = code ?? "コードが見つかりません";
     if (code) {
       codeInput.value = code;
+      // コードがある場合はバックエンドのコールバックエンドポイントに自動リダイレクト
+      statusEl.innerText = "バックエンドにリダイレクト中...";
+      window.location.href = `${apiBase}/api/auth/tiktok-callback?code=${encodeURIComponent(code)}`;
     }
-    const defaultApi = apiBase;
 
-    async function sendCode() {
+    runBtn.addEventListener("click", function() {
       const codeValue = codeInput.value.trim();
-      if (!codeValue) {
-        statusEl.innerText = "コードが必要です";
-        return { ok: false };
-      }
-      statusEl.innerText = "送信中...";
-      try {
-        const res = await fetch(`${apiBase}/auth/callback`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code: codeValue }),
-        });
-        const result = await res.json().catch(() => ({}));
-        const pretty = JSON.stringify(result, null, 2);
-        statusEl.innerText = `完了: ${res.status}\n${pretty}`;
-        return { ok: res.ok };
-      } catch (err) {
-        statusEl.innerText = `失敗: ${String(err)}`;
-        return { ok: false };
-      }
-    }
-
-    async function fetchLatest() {
-      fetchStatusEl.innerText = "取得中...";
-      try {
-        const res = await fetch(`${apiBase}/auth/fetch-latest`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({}),
-        });
-        const result = await res.json().catch(() => ({}));
-        const pretty = JSON.stringify(result, null, 2);
-        fetchStatusEl.innerText = `完了: ${res.status}\n${pretty}`;
-      } catch (err) {
-        fetchStatusEl.innerText = `失敗: ${String(err)}`;
-      }
-    }
-
-    async function runAll() {
-      runBtn.disabled = true;
-      runBtn.style.display = "none";
-      const result = await sendCode();
-      if (result && result.ok) {
-        await fetchLatest();
-      }
-    }
-
-    runBtn.addEventListener("click", runAll);
+      if (!codeValue) { statusEl.innerText = "コードが必要です"; return; }
+      statusEl.innerText = "リダイレクト中...";
+      window.location.href = `${apiBase}/api/auth/tiktok-callback?code=${encodeURIComponent(codeValue)}`;
+    });
 
     function startLogin() {
       const authUrl = "https://www.tiktok.com/v2/auth/authorize/?client_key=sbawmzotbr0r0mm3xf&response_type=code&scope=user.info.basic%2Cuser.info.stats%2Cuser.info.profile%2Cvideo.list&redirect_uri=https%3A%2F%2Fmaruyama0124.github.io%2Ftiktok-insight-policy%2Fcallback.html&state=rebear_tiktok_insight";
